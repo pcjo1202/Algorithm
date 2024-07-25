@@ -8,7 +8,6 @@ public class Main {
 	static int count = 0;
 
 	public static void main(String[] args) throws IOException {
-		// 입력, 출력
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
@@ -38,11 +37,9 @@ public class Main {
 			}else {
 				i++;
 			}
-			
 		}
 
 		bw.write(count + "");
-
 		bw.flush();
 		bw.close();
 	}
