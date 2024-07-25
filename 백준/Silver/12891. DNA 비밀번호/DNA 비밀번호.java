@@ -54,6 +54,7 @@ public class Main {
             else if (str.charAt(i) == 'G') countPart[2]--;
             else if (str.charAt(i) == 'T') countPart[3]--;
 
+
             // 마지막 문자열에 countPart 추가하기
             if (str.charAt(i + P) == 'A') countPart[0]++;
             else if (str.charAt(i + P) == 'C') countPart[1]++;
