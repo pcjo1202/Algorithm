@@ -12,11 +12,11 @@ public class Main {
         A = Long.parseLong(st.nextToken()); // 첫번째 숫자의 1의 개수
         B = Long.parseLong(st.nextToken()); // 두번째 숫자의 1의 개수
 
-//        long big = Math.max(A, B);
-//        long small = Math.min(A, B);
+        long big = Math.max(A, B);
+        long small = Math.min(A, B);
 
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < gcd(A, B); i++) {
+        for (int i = 0; i < gcd(big, small); i++) {
             result.append("1");
         }
 
