@@ -30,20 +30,30 @@ public class Solution {
                 }
             }
 
-            for (int i = 0; i <= N - M; i++) { //
-                for (int j = 0; j <= N - M; j++) {
-                    int temp = 0;
-                    for (int k = 0; k < M; k++) {
-                        for (int l = 0; l < M; l++) {
-                            temp += board[i + k][j + l];
-                        }
-                    }
-                    result = Math.max(temp, result);
-                }
-            }
+            solve(0, 0);
 
             sb.append("#").append(test_case).append(" ").append(result).append("\n");
         }
         System.out.println(sb);
+    }
+
+    static void solve(int i, int j) {
+        if (i > N - M) {
+            return;
+        }
+        if (j > N - M) {
+            solve(i + 1, 0);
+            return;
+        }
+
+        int temp = 0;
+
+        for (int k = 0; k < M; k++) {
+            for (int l = 0; l < M; l++) {
+                temp += board[i + k][j + l];
+            }
+        }
+        result = Math.max(temp, result);
+        solve(i, j + 1);
     }
 }
