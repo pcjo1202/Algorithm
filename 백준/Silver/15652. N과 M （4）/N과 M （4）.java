@@ -22,11 +22,11 @@ public class Main {
          * 비내림차순 (같은 것을 중복해서 포함해서 내림차순)
          * */
 
-        permutation(0);
+        permutation(0, 1);
 
     }
 
-    static void permutation(int depth) {
+    static void permutation(int depth, int start) {
         if (depth == M) {
             for (int i : numbers) {
                 System.out.print(i + " ");
@@ -35,13 +35,13 @@ public class Main {
             return;
         }
 
-        for (int i = 1; i <= N; i++) {
-            if (isSelect[i] && numbers[depth - 1] != i) continue;
-            if (depth > 0 && numbers[depth - 1] > i) continue;
+        for (int i = start; i <= N; i++) {
+//            if (isSelect[i] && numbers[depth - 1] != i) continue;
+//            if (depth > 0 && numbers[depth - 1] > i) continue;
             numbers[depth] = i;
-            isSelect[i] = true;
-            permutation(depth + 1);
-            isSelect[i] = false;
+//            isSelect[i] = true;
+            permutation(depth + 1, i);
+//            isSelect[i] = false;
         }
 
     }
