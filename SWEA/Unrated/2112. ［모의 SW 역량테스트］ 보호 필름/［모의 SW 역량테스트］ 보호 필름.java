@@ -38,6 +38,7 @@ public class Solution {
         System.out.println(sb);
     }
     static void subset(int depth, int cnt){ // cnt : 주입 횟 수
+        if(cnt >= result) return;
         // 기저 조건
         if(depth == D){
             // 성능 검사를 통과하는지 아닌지에 대한 함수를 작성
