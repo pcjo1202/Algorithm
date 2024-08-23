@@ -53,15 +53,18 @@ public class Solution {
 
                 // 회사 ~ 첫번째 고객 list[0] ,2, 3, 4,
                 temp += calDirection(office, list[consumer[0]]);
+
                 for (int i = 1; i < consumer.length; i++) {
                     // 첫번째 고객 ~ N -1번째 고객까지의 거리
                     // 0 ~ 1, 1 ~ 2 , 2 ~ 3, 3 ~ 4
                     temp += calDirection(list[consumer[i - 1]], list[consumer[i]]);
+                    if (temp >= result) break;
                 }
-
+                if (temp >= result) continue;
                 // 마지막 고객list[1] ~ 집
                 temp += calDirection(list[consumer[consumer.length - 1]], home);
-
+                if (temp >= result) continue;
+                
                 result = Math.min(result, temp);
 
             } while (nextPermutation(consumer));
