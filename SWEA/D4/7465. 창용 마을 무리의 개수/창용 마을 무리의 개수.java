@@ -25,29 +25,26 @@ public class Solution {
             pair = new int[M][2];
             parents = new int[N + 1]; // 1 ~ N+1번까지
 
-            for (int i = 0; i < M; i++) {
-                st = new StringTokenizer(br.readLine());
-                pair[i][0] = Integer.parseInt(st.nextToken());
-                pair[i][1] = Integer.parseInt(st.nextToken());
-            }
-
             for (int i = 1; i < N + 1; i++) {
                 parents[i] = -1;
             }
 
-            // 집합 관계 설정
             for (int i = 0; i < M; i++) {
-                int a = pair[i][0];
-                int b = pair[i][1];
+                st = new StringTokenizer(br.readLine());
+                int a = pair[i][0] = Integer.parseInt(st.nextToken());
+                int b = pair[i][1] = Integer.parseInt(st.nextToken());
 
+
+                // 집합 관계 설정
                 union(a, b);
             }
 
-            // 루트 노드의 개수 파악 (음수)
 
+            // 루트 노드의 개수 파악(서로 알고 있는 관계의 수) : 루트 노드의 수
             for (int i = 1; i < N + 1; i++) {
-                if (parents[i] < 0) result++;
+                if (parents[i] < 0) result++; // 저장되어 있는 값이 음수라면 루트 노드
             }
+
             sb.append(String.format("#%d %d\n", test_case, result));
         }
         System.out.println(sb);
