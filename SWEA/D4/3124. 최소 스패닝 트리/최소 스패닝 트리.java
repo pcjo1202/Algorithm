@@ -3,17 +3,15 @@ import java.util.*;
 
 public class Solution {
     static int V, E;
-    static int[] parents;
+    static List<Edge>[] adjList;
 
     static class Edge implements Comparable<Edge> {
-        int start, end, weight;
+        int end, weight;
 
-        public Edge(int start, int end, int weight) {
-            this.start = start;
+        public Edge(int end, int weight) {
             this.end = end;
             this.weight = weight;
         }
-
 
         @Override
         public int compareTo(Edge o) {
@@ -26,12 +24,16 @@ public class Solution {
         StringTokenizer st = null;
         StringBuilder sb = new StringBuilder();
         int T = Integer.parseInt(br.readLine());
+
         for (int test_case = 1; test_case <= T; test_case++) {
             st = new StringTokenizer(br.readLine());
             V = Integer.parseInt(st.nextToken());
             E = Integer.parseInt(st.nextToken());
 
-            Edge[] edges = new Edge[E];
+            adjList = new ArrayList[V + 1];
+            for (int i = 1; i <= V; i++) {
+                adjList[i] = new ArrayList<>();
+            }
 
             for (int i = 0; i < E; i++) {
                 st = new StringTokenizer(br.readLine());
@@ -39,52 +41,40 @@ public class Solution {
                 int end = Integer.parseInt(st.nextToken());
                 int weight = Integer.parseInt(st.nextToken());
 
-                edges[i] = new Edge(start, end, weight);
+                // 양방향 그래프
+                adjList[start].add(new Edge(end, weight));
+                adjList[end].add(new Edge(start, weight));
             }
 
-            // 서로소 집합 생성
-            parents = new int[V + 1];
+            // 프림 알고리즘 수행
+            boolean[] visited = new boolean[V + 1];
+            PriorityQueue<Edge> pq = new PriorityQueue<>();
+            pq.offer(new Edge(1, 0)); // 시작점 설정 (임의의 노드, 여기서는 1번 노드부터 시작)
 
-            for (int i = 1; i <= V; i++) {
-                parents[i] = -1;
-            }
+            long cost = 0;
+            int cnt = 0;
 
-            // 가중치를 기준으로 정렬
-            Arrays.sort(edges);
+            while (!pq.isEmpty()) {
+                Edge current = pq.poll();
 
-            // 그래프 생성
-            long cnt = 0, cost = 0; // cnt : 간선의 수, cost : 가중치
-            for (Edge e : edges) {
-                if (union(e.start, e.end)) { // 집합이 생성되면
-                    cost += e.weight;
-                    cnt++;
-                    if (cnt == V - 1) break;
+                if (visited[current.end]) continue;
+
+                visited[current.end] = true;
+                cost += current.weight;
+                cnt++;
+
+                if (cnt == V) break; // 모든 정점을 다 방문했으면 종료
+
+                for (Edge next : adjList[current.end]) {
+                    if (!visited[next.end]) {
+                        pq.offer(next);
+                    }
                 }
             }
 
             sb.append(String.format("#%d %d\n", test_case, cost));
         }
+
         System.out.println(sb);
-    }
-
-    static int find(int a) {
-        if (parents[a] < 0) return a;
-        return parents[a] = find(parents[a]);
-    }
-
-    static boolean union(int a, int b) {
-        int aRoot = find(a);
-        int bRoot = find(b);
-
-        if (aRoot == bRoot) return false;
-
-        if (parents[aRoot] < parents[bRoot]) { // 집합의 크기가 더 크다면,
-            parents[aRoot] += parents[bRoot];
-            parents[bRoot] = aRoot;
-        } else {
-            parents[bRoot] += parents[aRoot];
-            parents[aRoot] = bRoot;
-        }
-        return true;
     }
 }
