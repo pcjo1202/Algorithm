@@ -1,80 +1,92 @@
+import java.io.*;
 import java.util.*;
- 
+
 public class Main {
-    
-    static int k, w, h;
+    static int K, W, H;
     static int[][] board;
-    static int min = Integer.MAX_VALUE;
-    static int[] hdx = {-2, -2, -1, -1, 1, 1, 2, 2}; //말이 이동할 수 있는 8방향
-    static int[] hdy = {-1, 1, -2, 2, -2, 2, -1, 1};
-    static int[] dx = {0, 1, 0 ,-1}; // 원숭이가 이동할 수 있는 4방향
-    static int[] dy = {1, 0, -1, 0};
-    static boolean[][][] visited;
-    
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-    
-        k = scan.nextInt();
-        w = scan.nextInt();
-        h = scan.nextInt();
-        
-        board = new int[h][w];
-        for(int i = 0; i < h; i++) {
-            for(int j = 0; j < w; j++) {
-                board[i][j] = scan.nextInt();
+    static int[] di = {-1, 1, 0, 0}; // 상하좌우 인접
+    static int[] dj = {0, 0, -1, 1};
+    static int[] hi = {-2, -1, 1, 2, 2, 1, -1, -2}; // 말처럼 이동 오른쪽 위 부터 시계방향으로 순서대로
+    static int[] hj = {1, 2, 2, 1, -1, -2, -2, -1}; //
+
+    static class Point {
+        int i, j, cnt, horse;
+
+        public Point(int i, int j, int cnt, int horse) {
+            this.i = i;
+            this.j = j;
+            this.cnt = cnt; // 이동한 횟수
+            this.horse = horse;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        K = Integer.parseInt(br.readLine()); // 말처럼 움직일 수 있는 최대 수
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        W = Integer.parseInt(st.nextToken());
+        H = Integer.parseInt(st.nextToken());
+
+        board = new int[H][W];
+
+        for (int i = 0; i < H; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < W; j++) {
+                board[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        
-        visited = new boolean[h][w][k + 1];
-        min = bfs(0, 0);
-        
-        if(min == Integer.MAX_VALUE) System.out.println("-1");
-        else System.out.println(min);
+
+
+        System.out.println(bfs());
+
     }
-    
-    public static int bfs(int x, int y) {
-        Queue<Node> q = new LinkedList<>();
-        q.offer(new Node(x, y, 0, k)); 
-        visited[x][y][k] = true;
-        
-        while(!q.isEmpty()) {
-            Node current = q.poll();
-            if(current.x == h - 1 && current.y == w - 1) return current.count; 
-            
-            for(int i = 0; i < 4; i++) {
-                int nx = current.x + dx[i];
-                int ny = current.y + dy[i];
-                if(nx >= 0 && ny >= 0 && nx < h && ny < w && !visited[nx][ny][current.k] && board[nx][ny] == 0) {
-                    visited[nx][ny][current.k] = true;
-                    q.offer(new Node(nx, ny, current.count + 1, current.k));
+
+    static int bfs() {
+        Queue<Point> queue = new ArrayDeque<>();
+        boolean[][][] visited = new boolean[H][W][K + 1]; // 현재까지 이동한 횟수;
+
+        queue.offer(new Point(0, 0, 0, 0));
+        visited[0][0][0] = true; // 말 이동 횟수를 저장
+
+        while (!queue.isEmpty()) {
+            Point cur = queue.poll();
+            int ci = cur.i;
+            int cj = cur.j;
+
+            // 종료 조건 마지막 지점에 도착했을 때
+            if (ci == H - 1 && cj == W - 1) {
+                return cur.cnt;
+            }
+
+            // 탐색 : 말처럼 가거나, 인접해서 가거나,
+            // 최대 말의 횟수를 넘었다면, 바로 인접으로
+            for (int d = 0; d < 4; d++) {
+                int ni = ci + di[d];
+                int nj = cj + dj[d];
+
+                if (ni < 0 || ni >= H || nj < 0 || nj >= W) continue;
+                if (board[ni][nj] == 1) continue;
+                if (visited[ni][nj][cur.horse]) continue;
+
+                visited[ni][nj][cur.horse] = true;
+                queue.offer(new Point(ni, nj, cur.cnt + 1, cur.horse));
+            }
+
+            if (cur.horse < K) {
+                for (int d = 0; d < 8; d++) {
+                    int ni = ci + hi[d];
+                    int nj = cj + hj[d];
+
+                    if (ni < 0 || ni >= H || nj < 0 || nj >= W) continue;
+                    if (board[ni][nj] == 1) continue;
+                    if (visited[ni][nj][cur.horse + 1]) continue;
+
+                    visited[ni][nj][cur.horse + 1] = true;
+                    queue.offer(new Point(ni, nj, cur.cnt + 1, cur.horse + 1));
                 }
             }
-            
-            if(current.k > 0) {
-                for(int i = 0; i < 8; i++) {
-                    int nx = current.x + hdx[i];
-                    int ny = current.y + hdy[i];
-                    if(nx >= 0 && ny >= 0 && nx < h && ny < w && !visited[nx][ny][current.k - 1] && board[nx][ny] == 0) {
-                        visited[nx][ny][current.k - 1] = true;
-                        q.offer(new Node(nx, ny, current.count + 1, current.k - 1));
-                    }
-                }
-            }
         }
-        return min;
-    }
-    
-    public static class Node {
-        int x;
-        int y;
-        int count;
-        int k;
-        
-        public Node(int x, int y, int count, int k) {
-            this.x = x;
-            this.y = y;
-            this.count = count;
-            this.k = k;
-        }
+        return -1;
     }
 }
