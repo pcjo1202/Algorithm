@@ -3,7 +3,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class Solution {
+public class Solution{
     static int minTotal;
     static int[] plan, prices, isSelectedTicket;
 
@@ -25,38 +25,34 @@ public class Solution {
             }
 
             st = new StringTokenizer(br.readLine());
-            for (int i = 0; i < 12; i++) {
+            for (int i = 1; i <= 12; i++) {
                 plan[i] = Integer.parseInt(st.nextToken());
             }
 
-            subset(0, 0);
+            minTotal = dp();
 
             sb.append(String.format("#%d %d\n", test_case, minTotal));
         }
         System.out.println(sb);
     }
 
-    static void subset(int depth, int cnt) { // cnt..누적 요금?
-        // 가지치기
-        if (cnt >= minTotal) return;
+    static int dp() {
+        int[] dp = new int[13];
 
-        // 기저 조건
-        if (depth > 12) {
-            return;
-        }
-        if (depth == 12) {
-            minTotal = Math.min(minTotal, cnt);
-            return;
-        }
+        for (int i = 1; i <= 12; i++) {
+            // 전의 달과 현재 4개의 이용권중 하나를 선택한 것을 합한 것을 비교
+            int selDay = dp[i - 1] + plan[i] * prices[0]; // i 달에서 1일권 선택
+            int selMonth = dp[i - 1] + prices[1]; // i 달에서 한달권 선택
+            dp[i] = Math.min(selDay, selMonth);
 
-        // 탐색 조건
-        // 0달에 1년권을  선택 했을 때 =>
-        subset(depth + 12, cnt + prices[3]);
-        // 0달에 3달권을  선택 했을 때 =>
-        subset(depth + 3, cnt + prices[2]); // 3달뒤로
-        // 0달에 1달권을  선택 했을 때 =>
-        subset(depth + 1, cnt + prices[1]);
-        // 0달에 1일권을  선택 했을 때 =>
-        subset(depth + 1, cnt + prices[0] * plan[depth]);
+            if (i >= 3) { // 3달권도 확인
+                dp[i] = Math.min(dp[i], dp[i - 3] + prices[2]);
+            }
+            if (i >= 12) { // 1년권 확인
+                dp[i] = Math.min(dp[i], prices[3]);
+            }
+        }
+        return dp[12];
+
     }
 }
