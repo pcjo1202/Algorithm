@@ -33,7 +33,7 @@ public class Main {
         System.out.println(result);
     }
 
-    static void bfs(boolean[][] visited) {
+    static void bfs() {
         int count = 0;
 
         int[][] temp = new int[N][M];
@@ -45,8 +45,6 @@ public class Main {
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                if (visited[i][j]) temp[i][j] = 1;
-
                 if (temp[i][j] == 2) {
                     queue.offer(new int[]{i, j});
                 }
@@ -84,18 +82,16 @@ public class Main {
 
     static void comb(int depth, boolean[][] visited) {
         if (depth == 3) {
-            bfs(visited);
+            bfs();
             return;
         }
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 if (board[i][j] == 0) {
-                    if (visited[i][j]) continue;
-
-                    visited[i][j] = true;
+                    board[i][j] = 1;
                     comb(depth + 1, visited);
-                    visited[i][j] = false;
+                    board[i][j] = 0;
                 }
             }
         }
