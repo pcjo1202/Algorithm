@@ -45,15 +45,17 @@ public class Main {
             // 인접한 정점의 간선 제거
             for (int next : list.get(cur)) {
                 inDegree[next]--;
-            }
-
-            // 인접한 정점의 간선을 제거후, 인접한 정점 중 진입 정점이 0인 정점이 있다면 queue에 넣기
-            for (int next : list.get(cur)) {
+                
                 if (inDegree[next] == 0) {
                     queue.offer(next);
                     result.add(next);
                 }
             }
+
+            // 인접한 정점의 간선을 제거후, 인접한 정점 중 진입 정점이 0인 정점이 있다면 queue에 넣기
+            //for (int next : list.get(cur)) {
+                
+            // }
         }
 
         for (int a : result) {
