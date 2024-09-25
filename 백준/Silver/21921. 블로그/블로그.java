@@ -1,49 +1,54 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
+    static int N, X, max;
+    static int[] dates, pSum;
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int N = Integer.parseInt(st.nextToken());
-        int X = Integer.parseInt(st.nextToken());
-        int[] visitors = new int[N];
-        st = new StringTokenizer(br.readLine(), " ");
+        N = Integer.parseInt(st.nextToken()); // N일
+        X = Integer.parseInt(st.nextToken()); // 범위
+
+        dates = new int[N]; // 0-base
+        max = 0; // 가장 큰 방문자 수
+        pSum = new int[N + 1]; // 누적합 저장
+
+        st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N; i++) {
-            visitors[i] = Integer.parseInt(st.nextToken());
+            dates[i] = Integer.parseInt(st.nextToken());
         }
 
-        int sum = 0;
-        for (int i = 0; i < X; i++) {
-            sum += visitors[i];
+        // 누적 합
+        for (int i = 1; i < N + 1; i++) {
+            pSum[i] = pSum[i - 1] + dates[i - 1];
         }
+        // [0, 1, 5, 7, 12, 13]
 
+        // X 크기의 구간 합 중 가장 큰 수 구하기
 
-        int max = sum;
-        int answer = 1;
-        for (int i = 0; i < N - X; i++) { // 슬라이딩 윈도우
+        int count = 0;
 
-            //한칸 씩 이동
-            sum += visitors[i+X];
-            sum -= visitors[i];
+        for (int start = 0; start < N - X + 1; start++) {
+            int end = start + X;
 
-            if (sum == max) { // 최다 방문자수가 유지될 경우 answer++
-                answer++;
+            int temp = pSum[end] - pSum[start];
+            if (temp > max) {
+                max = temp;
+                count = 1;
+            } else if (temp == max) {
+                count++;
             }
-
-            if (sum > max) { // 최다 방문자수가 갱신되었을 경우
-                answer = 1;
-                max = sum;
-            }
-
         }
-        if (max == 0) { // 최대 방문자 수가 0이라면 SAD 출력
+        if (max == 0) {
             System.out.println("SAD");
         } else {
             System.out.println(max);
-            System.out.println(answer);
+            System.out.println(count);
         }
     }
 }
