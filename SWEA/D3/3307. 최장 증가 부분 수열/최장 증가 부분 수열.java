@@ -24,9 +24,8 @@ public class Solution {
 
             dp = new int[N];
 
-            solve1();
-//            solve2();
-//            System.out.println(Arrays.toString(dp));
+//            solve1(); // DP
+            solve2(); // 이분 탐색
 
             sb.append(String.format("#%d %d\n", tc, result));
         }
@@ -55,6 +54,20 @@ public class Solution {
 
     static void solve2() {
         // 이분 탐색
+        int length = 0;  // 현재 LIS의 길이를 추적
+
+        for (int num : numbers) {
+            int pos = Arrays.binarySearch(dp, 0, length, num);
+            if (pos < 0) {
+                pos = -(pos + 1);  // 이분 탐색 결과 음수인 경우 삽입 위치 계산
+            }
+            dp[pos] = num;  // 적절한 위치에 값 대입
+
+            if (pos == length) {
+                length++;  // dp 배열에 새로운 값을 추가했으므로 길이 증가
+            }
+        }
+        result = length;  // dp 배열의 크기가 LIS의 길이
     }
 
 }
