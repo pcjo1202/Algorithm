@@ -24,6 +24,7 @@ public class Solution {
             M = Integer.parseInt(br.readLine());
 
             dp = new int[N + 1][N + 1];
+            result = 0;
 
             for (int i = 0; i < M; i++) {
                 st = new StringTokenizer(br.readLine());
@@ -31,54 +32,42 @@ public class Solution {
                 int b = Integer.parseInt(st.nextToken());
 
                 dp[a][b] = 1;
-                dp[b][a] = -1;
             }
 
+            for (int i = 1; i < N + 1; i++) {
+                for (int j = 1; j < N + 1; j++) {
+                    if(i == j) continue;
+                    if(dp[i][j] == 0){
+                        dp[i][j] = INF;
+                    }
+                }
+            }
 
             for (int k = 1; k < N + 1; k++) {
                 for (int i = 1; i < N + 1; i++) {
                     for (int j = 1; j < N + 1; j++) {
-                        if (dp[i][j] == dp[j][k] && dp[i][j] != 0) {
-                            dp[i][k] = dp[i][j];
-                            dp[k][i] = -dp[i][j];
-                        }
+                        dp[i][j] = Math.min(dp[i][k] + dp[k][j], dp[i][j]);
                     }
                 }
             }
-            result = 0;
 
             for (int i = 1; i < N + 1; i++) {
-                int count=0;
+                int hightCnt = 0;
+                int lowCnt = 0;
                 for (int j = 1; j < N + 1; j++) {
-                    if(dp[i][j] != 0){
-                        count++;
+                    if(i == j) continue;
+                    if(dp[i][j] != INF && dp[i][j] > 0){
+                        hightCnt++;
+                    }
+                    if(dp[j][i] != INF && dp[j][i] > 0){
+                        lowCnt++;
                     }
                 }
-                if(count == N - 1){
+
+                if(lowCnt + hightCnt == N -1){
                     result++;
                 }
             }
-
-            //            for (int i = 1; i < N + 1; i++) {
-//                for (int j = 1; j < N + 1; j++) {
-//                    if(i == j) continue;
-//                    if(dp[i][j] == 0){
-//                        dp[i][j] = INF;
-//                    }
-//                }
-//            }
-
-            //            for (int i = 1; i < N + 1; i++) {
-//                int count = 1;
-//                for (int j = 1; j < N + 1; j++) {
-//                    if(0 < dp[i][j] && dp[i][j] != INF){
-//                        count++;
-//                    }
-//                }
-//                if(count == N - 1){
-//                    result++;
-//                }
-//            }
 
             sb.append(String.format("#%d %d\n", tc, result));
         }
