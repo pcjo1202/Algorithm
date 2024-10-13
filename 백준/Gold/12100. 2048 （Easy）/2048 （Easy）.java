@@ -74,16 +74,6 @@ public class Main {
             // 2. 회전 시킨 배열 오른쪽으로 밀기
             goMove();
 
-
-            // 3. 되돌리기 회전
-            if (d == 0) { // 위로 밀때 -> 1번 회전 -> 3번 회전
-                rotateArr(3);
-            } else if (d == 2) { // 아래로 밀때 -> 3번 회전 -> 1번 회전
-                rotateArr(1);
-            } else if (d == 3) { // 좌로 밀때 -> 2번 회전 -> 2번 회전
-                rotateArr(2);
-            }
-
         }
 
     }
