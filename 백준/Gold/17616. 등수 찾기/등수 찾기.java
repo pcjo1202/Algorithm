@@ -1,23 +1,13 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
     static int N, M, X, U, V;
-    static int[][] board, dp;
-    static List<Pair> list;
-
-    static class Pair {
-        int win, lose;
-
-        public Pair(int win, int lose) {
-            this.win = win;
-            this.lose = lose;
-        }
-    }
+    static List<ArrayList<Integer>> list; // 내가 이기는 사람
+    static List<ArrayList<Integer>> relist; // 내가 지는 사람
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -30,58 +20,51 @@ public class Main {
         V = 0; // 가장 낮은 등수
 
         list = new ArrayList<>();
-        board = new int[N + 1][N + 1];
-        dp = new int[N + 1][N + 1];
+        relist = new ArrayList<>();
+        for (int i = 0; i < N + 1; i++) {
+            list.add(new ArrayList<>());
+            relist.add(new ArrayList<>());
+        }
 
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
-            board[a][b] = 1;
-            list.add(new Pair(a, b));
+            list.get(a).add(b);
+            relist.get(b).add(a);
         }
 
+        int loseCount = findWin(X, new boolean[N + 1]); // X보다 못한 사람 수
+//        System.out.println("X보다 못한 사람 수 :" + loseCount);
+        int winCount = findLose(X, new boolean[N + 1]); // X보다 잘한 사람 수
+//        System.out.println("X보다 잘한 사람 수 : " + winCount);
+        // 가장 높은 등수
+        U = winCount + 1;
+        // 가장 낮은 등수
+        V = N - loseCount;
 
-        // 나보다 작은 사람 구하기
-        for (int i = 1; i < N + 1; i++) {
-            dfs(i, i);
-        }
-
-        int winSum = 0; // X 보다 낮은
-        int loseSum = 0; // X 보다 높은
-        int mola = 0; // 모르는 사람
-        for (int i = 1; i < N + 1; i++) {
-            if (board[X][i] == 1) {
-                winSum++;
-            }
-
-            if (board[i][X] == 1) {
-                loseSum++;
-            }
-
-            if (i != X && board[X][i] == 0) {
-                mola++;
-            }
-        }
-//
-//        System.out.println("나보다 낮은: " + winSum);
-//        System.out.println("나보다 높은: " + loseSum);
-//        System.out.println("몰라: " + mola);
-
-        // 가장 높은 등수 : 모르는 사람이 나보다 뒤에
-        U = loseSum + 1;
-        // 가장 낮은 등수 : 모르는 사람이 나보다 앞에
-        V = N - winSum;
         System.out.printf("%d %d", U, V);
     }
 
-    static void dfs(int prev, int cur) {
-        // 기저 조건
-        for (int i = 1; i < N + 1; i++) {
-            if (board[cur][i] == 1) { // Node가 이기는 상대라면
-                board[prev][i] = board[cur][i];
-                dfs(cur, i);
-            }
+    static int findWin(int node, boolean[] visited) {
+        int count = 0;
+        visited[node] = true;
+
+        for (int next : list.get(node)) {
+            if (visited[next]) continue;
+            count += findWin(next, visited) + 1;
         }
+        return count;
+    }
+
+    static int findLose(int node, boolean[] visited) {
+        int count = 0;
+        visited[node] = true;
+
+        for (int next : relist.get(node)) {
+            if (visited[next]) continue;
+            count += findLose(next, visited) + 1;
+        }
+        return count;
     }
 }
