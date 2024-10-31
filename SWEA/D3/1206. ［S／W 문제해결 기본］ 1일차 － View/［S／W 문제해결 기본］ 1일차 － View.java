@@ -27,7 +27,7 @@ public class Solution {
             }
 
             // 좌우 2개의 빌딩 체크
-            for (int i = 0; i < N; i++) {
+            for (int i = 2; i < N - 2; i++) {
                 int cur = building[i]; // 확인 해보고자 하는 빌딩
 
                 boolean flag = true;
@@ -36,7 +36,7 @@ public class Solution {
                 for (int d = 0; d < 4; d++) {
                     int ni = i + di[d];
 
-                    if (ni < 0 || ni >= N) continue;
+//                    if (ni < 0 || ni >= N) continue;
                     int next = building[ni];
 
                     int target = cur - next;
