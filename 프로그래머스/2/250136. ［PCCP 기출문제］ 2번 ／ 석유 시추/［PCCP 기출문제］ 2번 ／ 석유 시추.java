@@ -25,6 +25,7 @@ class Solution {
         for(int i = 0 ; i < N ; i++){
             for(int j = 0; j < M ; j++){
                 if(land[i][j] == 1 && visited[i][j] == -1){
+                    // System.out.println(i + ", " +j);
                     int temp = bfs(i, j, land, ++num);
                     list.put(num, temp);
                 }
@@ -46,6 +47,10 @@ class Solution {
             }
             
             answer = Math.max(answer, sum);
+        }
+        
+        for(int [] arr: visited){
+            System.out.println(Arrays.toString(arr));
         }
         
         // 열을 한번씩 돌아서 최대 획득 덩어리 구하기
