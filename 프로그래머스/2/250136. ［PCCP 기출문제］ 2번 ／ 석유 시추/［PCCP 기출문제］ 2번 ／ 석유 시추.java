@@ -25,7 +25,6 @@ class Solution {
         for(int i = 0 ; i < N ; i++){
             for(int j = 0; j < M ; j++){
                 if(land[i][j] == 1 && visited[i][j] == -1){
-                    // System.out.println(i + ", " +j);
                     int temp = bfs(i, j, land, ++num);
                     list.put(num, temp);
                 }
@@ -34,7 +33,10 @@ class Solution {
         
         for(int i = 0 ; i < M ; i++){
             int sum = 0;
+            
+            // 중복 방지 체크
             boolean[] check = new boolean[list.size() + 1];
+            
             for(int j = 0; j < N; j++){
                 if(visited[j][i] != -1){
                     if(check[visited[j][i]]) continue;
@@ -45,7 +47,6 @@ class Solution {
             
             answer = Math.max(answer, sum);
         }
-        
         
         // 열을 한번씩 돌아서 최대 획득 덩어리 구하기
         
