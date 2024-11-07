@@ -1,99 +1,138 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
     static int N, M, result;
-    static int[][] board;
-    static int[] di = {-1, 1, 0, 0};
+    static int[][] map;
+    static boolean[] isSelected;
+    static List<Node> virus, blank;
+    static int[] di = {-1, 1, 0, 0}; // 상 하 좌 우
     static int[] dj = {0, 0, -1, 1};
+
+    static class Node {
+        int i, j;
+
+        public Node(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "i=" + i +
+                    ", j=" + j +
+                    '}';
+        }
+    }
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken()); // 열 크기
+        M = Integer.parseInt(st.nextToken()); // 행 크기
 
-        board = new int[N][M]; // 1-base
+
+        blank = new ArrayList<>();
+        virus = new ArrayList<>();
+
+        map = new int[N][M];
 
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < M; j++) {
-                board[i][j] = Integer.parseInt(st.nextToken());
+                map[i][j] = Integer.parseInt(st.nextToken());
+                // blank 저장
+                if (map[i][j] == 0) {
+                    blank.add(new Node(i, j));
+                } else if (map[i][j] == 2) {
+                    // virus
+                    virus.add(new Node(i, j));
+                }
             }
         }
 
-
-        // 벽을 세울 수 있는 가능한 모든 곳 중 3개를 뽑아서 세워보고, 바이러스를 퍼트려본다.
-
         result = 0;
-
-        comb(0, new boolean[N][M]);
+        isSelected = new boolean[blank.size()];
+        combination(0, 0);
 
         System.out.println(result);
     }
 
-    static void bfs() {
-        int count = 0;
+    static int spread(int[][] arr) {
+        boolean[][] visited = new boolean[N][M];
+        Queue<Node> queue = new ArrayDeque<>();
 
-        int[][] temp = new int[N][M];
-        for (int i = 0; i < N; i++) {
-            temp[i] = board[i].clone();
-        }
-
-        Queue<int[]> queue = new ArrayDeque<>();
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (temp[i][j] == 2) {
-                    queue.offer(new int[]{i, j});
-                }
-            }
+        // 초기 바이러스 위치를 큐에 넣음
+        for (Node res : virus) {
+            queue.offer(res);
+            visited[res.i][res.j] = true;
         }
 
         while (!queue.isEmpty()) {
-            int[] cur = queue.poll();
-            int ci = cur[0];
-            int cj = cur[1];
-
+            Node cur = queue.poll();
 
             for (int d = 0; d < 4; d++) {
-                int ni = ci + di[d];
-                int nj = cj + dj[d];
+                int ni = cur.i + di[d];
+                int nj = cur.j + dj[d];
 
                 if (ni < 0 || ni >= N || nj < 0 || nj >= M) continue;
+                if (visited[ni][nj]) continue;
 
-                if (temp[ni][nj] == 0) {
-                    temp[ni][nj] = 2;
-                    queue.offer(new int[]{ni, nj});
+                // 바이러스 기준으로 주변에 빈칸이 있다면, 바이러 전파
+                if (arr[ni][nj] == 0) {
+                    arr[ni][nj] = 2;
+                    queue.offer(new Node(ni, nj));
+                    visited[ni][nj] = true;
+                }
+            }
+        }
+        
+        int sum = 0; // 빈칸의 개수 구하기
+        for (int[] temp : arr) {
+            for (int res : temp) {
+                if (res == 0) {
+                    sum++;
                 }
             }
         }
 
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (temp[i][j] == 0) {
-                    count++;
-                }
-            }
-        }
-        result = Math.max(result, count);
+        return sum;
     }
 
-    static void comb(int depth, boolean[][] visited) {
+    static void combination(int depth, int start) {
+        // 기저 조건
         if (depth == 3) {
-            bfs();
+
+            int[][] temp = new int[N][M];
+
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < M; j++) {
+                    temp[i][j] = map[i][j];
+                }
+            }
+
+            // 벽을 세우기로 선택한 곳에 벽을 세우고, 바이러스 전파를 시킨다.
+            for (int i = 0; i < blank.size(); i++) {
+                if (isSelected[i]) {
+                    Node cur = blank.get(i);
+                    temp[cur.i][cur.j] = 1;
+                }
+            }
+
+            // 바이러스 전파 시키고, 안전 영역 구하기.
+            result = Math.max(result, spread(temp));
             return;
         }
 
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (board[i][j] == 0) {
-                    board[i][j] = 1;
-                    comb(depth + 1, visited);
-                    board[i][j] = 0;
-                }
-            }
+        for (int i = start; i < blank.size(); i++) {
+            if (isSelected[i]) continue;
+
+            isSelected[i] = true;
+            combination(depth + 1, i + 1);
+            isSelected[i] = false;
         }
     }
 }
