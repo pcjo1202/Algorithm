@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 
 public class Solution {
     static int N, result, maxCoreCnt;
-    static int[][] map;
+    static int[][] map, tempMap;
     static int[] di = {-1, 1, 0, 0};
     static int[] dj = {0, 0, -1, 1};
     static List<Node> cores;
@@ -30,11 +30,15 @@ public class Solution {
                 st = new StringTokenizer(br.readLine());
                 for (int j = 0; j < N; j++) {
                     map[i][j] = Integer.parseInt(st.nextToken());
-                    // 코어 저장
-                    if (map[i][j] == 1) {
-                        cores.add(new Node(i, j));
-                    }
+                    if (map[i][j] == 1) cores.add(new Node(i, j));
                 }
+            }
+
+
+            tempMap = new int[N][N];
+
+            for (int i = 0; i < N; i++) {
+                tempMap[i] = map[i].clone();
             }
 
             maxCoreCnt = 0;
@@ -56,28 +60,28 @@ public class Solution {
     static void dfs(int depth, int count, int coreCount) {
         // 기저 조건 : 모든 코어를 확인 했을 때
         if (depth == cores.size()) {
-            // 코어 연결 횟수가 최대 일 때
             if (maxCoreCnt < coreCount) {
                 maxCoreCnt = coreCount;
                 result = count;
-            } else if (maxCoreCnt == coreCount) {
+            }else if(maxCoreCnt == coreCount){
                 result = Math.min(result, count);
             }
-
             return;
         }
 
         // 현재 코어
         Node cur = cores.get(depth);
 
+        // 가장자리와 붙어있는지 확인 붙어있으면, 선 연결 안하고 바로 다음 재귀 호출
         if (cur.i == 0 || cur.i == N - 1 || cur.j == 0 || cur.j == N - 1) {
             dfs(depth + 1, count, coreCount + 1);
-            return;
         } else {
             // 4방으로 선을 연결 할 수 있는지 확인 후 재귀 호출
             for (int d = 0; d < 4; d++) {
                 int ni = cur.i + di[d];
                 int nj = cur.j + dj[d];
+
+                if (ni < 0 || ni >= N || nj < 0 || nj >= N) continue;
 
                 boolean flag = true;
                 List<Node> lineList = new ArrayList<>();
@@ -85,7 +89,7 @@ public class Solution {
                 while (ni >= 0 && ni < N && nj >= 0 && nj < N) {
                     // 1. 이미 그어져 있는 선을 만날 경우 false
                     // 2. core를 만날 경우 false;
-                    if (map[ni][nj] == 1 || map[ni][nj] == 2) {
+                    if (tempMap[ni][nj] == 2 || tempMap[ni][nj] == 1) {
                         flag = false;
                         break;
                     }
@@ -98,21 +102,20 @@ public class Solution {
                 if (flag) {
                     // 라인 그리기
                     for (Node line : lineList) {
-                        map[line.i][line.j] = 2;
+                        tempMap[line.i][line.j] = 2;
                     }
 
                     dfs(depth + 1, count + lineList.size(), coreCount + 1);
 
                     // 라인 그린거 원상복귀
                     for (Node line : lineList) {
-                        map[line.i][line.j] = 0;
+                        tempMap[line.i][line.j] = 0;
                     }
                 }
+
             }
         }
-
-        // 전선을 안긋는 경우
-        dfs(depth + 1, count, coreCount);
+        dfs(depth + 1, count,  coreCount);
     }
 
     static class Node {
