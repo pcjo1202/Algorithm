@@ -44,10 +44,10 @@ public class Main {
             }
         }
 
-        System.out.println(bfs());
+        System.out.println(bfs() ? 1 : 0);
     }
 
-    static int bfs() {
+    static boolean bfs() {
         Queue<Node> queue = new ArrayDeque<>();
         queue.offer(new Node(red.redI, red.redJ, blue.blueI, blue.blueJ, 0));
         visited[red.redI][red.redJ][blue.blueI][blue.blueJ] = true;
@@ -56,7 +56,7 @@ public class Main {
             Node cur = queue.poll();
 
             if (cur.count > 10) break; // 최대 10번까지 이동 가능
-            if (check(cur)) return 1; // 성공 조건 만족
+            if (check(cur)) return true; // 성공 조건 만족
 
             for (int d = 0; d < 4; d++) {
                 int[] nextRed = roll(cur.redI, cur.redJ, d);
@@ -77,14 +77,14 @@ public class Main {
                     }
                 }
 
-                if (!visited[nextRed[0]][nextRed[1]][nextBlue[0]][nextBlue[1]]) {
-                    visited[nextRed[0]][nextRed[1]][nextBlue[0]][nextBlue[1]] = true;
-                    queue.offer(new Node(nextRed[0], nextRed[1], nextBlue[0], nextBlue[1], cur.count + 1));
-                }
+                if (visited[nextRed[0]][nextRed[1]][nextBlue[0]][nextBlue[1]]) continue;
+
+                queue.offer(new Node(nextRed[0], nextRed[1], nextBlue[0], nextBlue[1], cur.count + 1));
+                visited[nextRed[0]][nextRed[1]][nextBlue[0]][nextBlue[1]] = true;
             }
         }
 
-        return 0; // 실패
+        return false; // 실패
     }
 
     static int[] roll(int i, int j, int d) {
