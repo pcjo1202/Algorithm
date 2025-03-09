@@ -3,8 +3,6 @@ import java.util.*;
 
 public class Main {
     static int N;
-    static int[] list;
-    static int[][] dp;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -12,32 +10,21 @@ public class Main {
 
         PriorityQueue<Integer> pq = new PriorityQueue<>();
 
-        list = new int[N];
         for (int i = 0; i < N; i++) {
-            list[i] = Integer.parseInt(br.readLine());
-            pq.offer(list[i]);
+            pq.offer(Integer.parseInt(br.readLine()));
         }
 
         int result = 0;
 
-        if (N == 1) {
-            System.out.println(0);
-            return;
-        }
-
         while (!pq.isEmpty()) {
-            int a = pq.poll();
-            int b = 0;
-            if (!pq.isEmpty()) {
-                b = pq.poll();
+            int a = pq.poll(); // 처음 하나 꺼내기
+            if (pq.isEmpty()) { // 비어있다면 종료 조건
+                break;
             }
+            int b = pq.poll();
 
             result += a + b;
-            if (pq.isEmpty()) {
-                break;
-            } else {
-                pq.offer(a + b);
-            }
+            pq.offer(a + b);
         }
 
         System.out.println(result);
