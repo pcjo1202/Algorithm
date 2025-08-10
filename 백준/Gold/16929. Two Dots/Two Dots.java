@@ -29,11 +29,11 @@ public class Main {
         // 사이클을 체크하는 방법
         // 조건 : 무방향 -> 유니온 파인드?, bfs ? 배열이니까 bfs?
 
+        visited = new boolean[N][M];
         boolean flag = false;
         out:
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                visited = new boolean[N][M]; // 굳이 매번 새로 초기화하려면 여기 유지 가능
                 if (dfs(i, j, -1, -1, board[i][j], 1)) {
                     flag = true;
                     break out;
