@@ -2,46 +2,43 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-	static int N;
-	static int M;
-	static int[] set;
-	static int count = 0;
+    static int N, M;
+    static int[] list;
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
-		N = Integer.parseInt(br.readLine());
-		M = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
+        M = Integer.parseInt(br.readLine());
 
-		set = new int[N];
-		
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < set.length; i++) {
-			set[i] = Integer.parseInt(st.nextToken());
-		}
+        list = new int[N];
 
-		Arrays.sort(set);
-		
-		int i = 0;
-		int j = N -1;
-		
-		while(i<j) {
-			int temp = set[i] + set[j];
-			if(temp == M) {
-				count++;
-				i++;
-				j--;
-			}else if(temp > M ) {
-				j--;
-			}else {
-				i++;
-			}
-		}
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            list[i] = Integer.parseInt(st.nextToken());
+        }
 
-		bw.write(count + "");
-		bw.flush();
-		bw.close();
-	}
+        Arrays.sort(list);
+        // 1 2 3 4 5 7
 
+        int left = 0;
+        int right = N - 1;
+        int cnt = 0;
+
+        while (left < right) {
+            int num = list[left] + list[right];
+
+            if (num < M) {
+                left++;
+            } else if (num == M) {
+                cnt++;
+                right--;
+            } else {
+                right--;
+            }
+        }
+
+        System.out.println(cnt);
+    }
 }
