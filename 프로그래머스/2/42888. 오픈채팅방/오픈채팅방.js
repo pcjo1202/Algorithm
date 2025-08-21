@@ -34,13 +34,5 @@ function solution(record) {
     return answer;
 }
 
-const changeNickname = (arr, userId, nickname) =>{
-    arr.forEach(e =>{
-        if(e.userId === userId){
-            e.nickname = nickname
-        }
-    })
-}
-
 const enterString = (name) => `${name}님이 들어왔습니다.`
 const leaveString = (name) => `${name}님이 나갔습니다.`
